@@ -1,0 +1,7 @@
+# Skills CLI staging directory.
+# `npx skills add` stages packages here and then copies them into
+# .claude/skills/, which is what Claude Code actually reads and what this
+# repository tracks. .agents/ is a byte-for-byte duplicate (~3.2 MB) and is
+# regenerated automatically by scripts/setup-claude-skills.sh, so it is not
+# committed. Nothing in .claude/skills/ links to it.
+.agents/
