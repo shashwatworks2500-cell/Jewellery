@@ -27,10 +27,32 @@ Quick routing:
 ## Verifying the skills are present
 
 ```bash
-bash scripts/setup-claude-skills.sh --verify   # offline check, no network, no writes
+bash scripts/verify-claude-skills.sh
 ```
 
-Expected: `28/28`. If skills are missing, run without `--verify` to restore them.
+Read-only, offline, no dependency on anything outside this repository. Exit 0 = pass. It checks the
+canonical layout, frontmatter validity, symlink containment, external/ephemeral dependencies, and git
+tracking.
+
+To restore skills that are genuinely missing:
+
+```bash
+bash scripts/setup-claude-skills.sh            # restore
+bash scripts/setup-claude-skills.sh --verify   # offline count check
+```
+
+### If a session reports the skills are not discoverable
+
+Run `bash scripts/verify-claude-skills.sh` **in that session** before reinstalling anything. The
+output separates the two very different causes:
+
+- **`RESULT: PASS`** — the repository is correct and the skills are on disk at the canonical path.
+  The session is not looking at this repository: check that its working directory is the repo root
+  (`pwd` vs `git rev-parse --show-toplevel`), and that its clone actually contains the skills commit
+  (`git log --oneline -1 -- .claude/skills`). A clone made before the skills were committed will not
+  have them; fetch and check out the current branch.
+- **`RESULT: FAIL`** — a real repository defect. The failing line names it. Fix that specific item;
+  do not blanket-reinstall, which risks duplicating or overwriting valid vendored skills.
 
 ## Rules for this repository
 
