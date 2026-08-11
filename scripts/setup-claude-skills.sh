@@ -23,6 +23,8 @@ cd "$REPO_ROOT" || exit 1
 SKILLS_DIR=".claude/skills"
 LOCKFILE="skills-lock.json"
 
+VERIFY_ONLY=0
+
 # Guard: refuse to run with a global flag smuggled in via arguments.
 for arg in "$@"; do
   case "$arg" in
@@ -30,10 +32,29 @@ for arg in "$@"; do
       echo "ERROR: this script is project-scoped by design; -g/--global is not allowed." >&2
       exit 2
       ;;
+    --verify|-v)
+      VERIFY_ONLY=1
+      ;;
+    -h|--help)
+      cat <<'USAGE'
+Usage: bash scripts/setup-claude-skills.sh [--verify]
+
+  (no args)   Restore any missing skills into .claude/skills/, then verify.
+              Only touches skills that are absent; existing ones are left alone.
+  --verify    Verify only. No installs, no network, no writes. Exit 0 if all
+              expected skills are present and valid.
+
+Never accepts -g/--global: this repository's skills are project-scoped.
+USAGE
+      exit 0
+      ;;
   esac
 done
 
-command -v npx >/dev/null 2>&1 || { echo "ERROR: npx not found. Install Node.js first." >&2; exit 1; }
+# Network/node are only needed when we may actually install something.
+if [ "$VERIFY_ONLY" -eq 0 ]; then
+  command -v npx >/dev/null 2>&1 || { echo "ERROR: npx not found. Install Node.js first." >&2; exit 1; }
+fi
 
 echo "Repository : $REPO_ROOT"
 echo "Target     : $SKILLS_DIR (project-level)"
@@ -86,7 +107,7 @@ EXPECTED=${#SKILLS[@]}
 # ---------------------------------------------------------------------------
 # Fast path: restore straight from the lockfile when present.
 # ---------------------------------------------------------------------------
-if [ -f "$LOCKFILE" ]; then
+if [ -f "$LOCKFILE" ] && [ "$VERIFY_ONLY" -eq 0 ]; then
   echo "Found $LOCKFILE — attempting lockfile restore..."
   if npx --yes skills experimental_install >/dev/null 2>&1; then
     installed=$(find "$SKILLS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
@@ -116,8 +137,15 @@ for entry in "${SKILLS[@]}"; do
   name="${entry##* }"
 
   if [ -f "$SKILLS_DIR/$name/SKILL.md" ]; then
-    printf '  skip    %-30s (already present)\n' "$name"
+    [ "$VERIFY_ONLY" -eq 0 ] && printf '  skip    %-30s (already present)\n' "$name"
     skipped=$((skipped + 1))
+    continue
+  fi
+
+  if [ "$VERIFY_ONLY" -eq 1 ]; then
+    printf '  ABSENT  %-30s (run without --verify to restore)\n' "$name"
+    failed=$((failed + 1))
+    FAILED_NAMES+=("$name")
     continue
   fi
 
@@ -155,6 +183,28 @@ for entry in "${SKILLS[@]}"; do
 done
 
 total_dirs=$(find "$SKILLS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+
+# Integrity: nothing under .claude/skills/ may point outside the repository.
+stray_links=$(find "$SKILLS_DIR" -type l 2>/dev/null | wc -l | tr -d ' ')
+[ "$stray_links" -ne 0 ] && echo "  WARNING: $stray_links symlink(s) under $SKILLS_DIR — skills must be real files."
+
+# Advisory: globally-installed skills of the same name can shadow the repo copies.
+# The repo is the source of truth; global copies are unpinned and may be stale.
+GLOBAL_ROOT="${HOME:-/root}/.claude/skills"
+if [ -d "$GLOBAL_ROOT" ]; then
+  shadowed=$(comm -12 \
+    <(find "$GLOBAL_ROOT" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort) \
+    <(find "$SKILLS_DIR"  -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort) \
+    | wc -l | tr -d ' ')
+  if [ "${shadowed:-0}" -gt 0 ]; then
+    echo
+    echo "  NOTE: $shadowed skill(s) with matching names also exist globally in"
+    echo "        $GLOBAL_ROOT"
+    echo "        The repository copy is authoritative and hash-pinned. The global copies are"
+    echo "        unpinned and may be stale. To remove the ambiguity:"
+    echo "          npx skills remove --global   # or delete the duplicate dirs by hand"
+  fi
+fi
 
 echo
 echo "------------------------------------------"

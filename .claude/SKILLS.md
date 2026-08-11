@@ -9,10 +9,62 @@ with no global installation and no dependency on ephemeral container state.
 - **Total skills:** 28
 - **Install scope:** project-level only (never `-g`)
 - **Lockfile:** `skills-lock.json` (pins source repo + content hash per skill)
-- **Reinstall / restore:** `bash scripts/setup-claude-skills.sh`
+- **Verify (offline):** `bash scripts/setup-claude-skills.sh --verify`
+- **Restore:** `bash scripts/setup-claude-skills.sh`
 
 > These are *documentation* skills — guidance Claude reads. Installing them does **not** add React,
 > Next.js, Three.js, GSAP or any runtime dependency to this project. No `package.json` is created.
+
+---
+
+## How discovery works
+
+Claude Code reads project skills from `<repo-root>/.claude/skills/`. Each subdirectory whose
+`SKILL.md` has valid YAML frontmatter (`name`, `description`) is registered automatically when a
+session opens at the repository root. Nothing needs to be installed or run first.
+
+Three repository files make this reliable in a *fresh* session, and all three are committed:
+
+| File | Role |
+|---|---|
+| `.claude/skills/` | The skills themselves — real files, no symlinks, fully git-tracked |
+| `.claude/settings.json` | Grants the `Skill` permission at project scope, so a new session can invoke skills without a per-call prompt. Without this, the only grant lives in machine-global config that does not travel with the repo. |
+| `CLAUDE.md` | Tells the session the skills exist and routes tasks to the right one. Skills are *listed* automatically, but a session has no reason to *consult* them without this pointer. |
+
+**Restoring in a fresh session:** normally nothing to do. A `git clone` already contains all 28
+skills, so they are discoverable the moment the session opens at the repo root. The bootstrap script
+is a repair tool, not a prerequisite — it is only needed if files were deleted.
+
+**Verifying:**
+
+```bash
+bash scripts/setup-claude-skills.sh --verify   # offline, no network, no writes
+git ls-files .claude/skills | grep -c '/SKILL.md$'   # expect 28
+```
+
+Expected result: `verified : 28/28`, exit code 0.
+
+## What NOT to delete
+
+- **`.claude/skills/`** — the skills. Vendored from upstream and hash-pinned in `skills-lock.json`.
+  Do not hand-edit; change only via the bootstrap script.
+- **`.claude/settings.json`** — deleting it reintroduces permission prompts in fresh sessions.
+- **`CLAUDE.md`** — deleting it means future sessions stop consulting these skills.
+- **`skills-lock.json`** — the pin manifest; without it there is no record of source or hash.
+- **`scripts/setup-claude-skills.sh`** — the repair path.
+
+## Intentionally ignored by git
+
+- **`.agents/`** — the skills CLI stages packages here before copying into `.claude/skills/`. It is a
+  byte-for-byte ~3.2 MB duplicate, regenerated on demand, and nothing in `.claude/skills/` links to
+  it. Ignored via `.gitignore`.
+
+## Known issue: global shadow copies
+
+If the same skill names are also installed globally (`~/.claude/skills/`), those copies are unpinned
+and may be stale. The repository copy is authoritative. `--verify` reports the overlap count; clear
+it with `npx skills remove --global`. Global installs are ephemeral in container environments and
+will not exist on a genuinely fresh machine.
 
 ---
 
