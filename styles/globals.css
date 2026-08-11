@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Design tokens. Mirrored in lib/tokens.ts for the 3D scene.
+ * Never write a hex literal in a component (brief §2, §7).
+ */
+:root {
+  --vitrine: #0b0e14;
+  --vitrine-2: #141925;
+  --champagne: #d8b778;
+  --platinum: #e8ecf2;
+  --ice: #7fb6d6;
+  --muted: #9aa4b2;
+
+  /* Type scale — clamp-based, three roles (display / numerals / UI). */
+  --step-wordmark: clamp(3.25rem, 11.5vw, 10.5rem);
+  --step-display: clamp(2rem, 4.8vw, 4.25rem);
+  --step-numeral: clamp(1.1rem, 2.2vw, 1.75rem);
+  --step-body: clamp(0.98rem, 1.05vw, 1.1rem);
+  --step-eyebrow: 0.72rem;
+
+  --rule: rgba(216, 183, 120, 0.22);
+  --shell: clamp(1.25rem, 5vw, 6rem);
+}
+
+html {
+  background-color: var(--vitrine);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--vitrine);
+  color: var(--platinum);
+  font-family: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  font-size: var(--step-body);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Lenis owns the scroll; it needs this to avoid fighting native smooth. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.font-display {
+  font-family: var(--font-italiana), ui-serif, Georgia, serif;
+  font-weight: 400;
+}
+.font-numeral {
+  font-family: var(--font-bodoni), ui-serif, Georgia, serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.wordmark {
+  font-family: var(--font-italiana), ui-serif, Georgia, serif;
+  font-size: var(--step-wordmark);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+.display {
+  font-family: var(--font-italiana), ui-serif, Georgia, serif;
+  font-size: var(--step-display);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  font-size: var(--step-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--champagne);
+  font-weight: 400;
+}
+
+/* Focus rings in champagne (brief §8). Visible, never removed. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 1px solid var(--champagne);
+  outline-offset: 4px;
+  border-radius: 1px;
+}
+
+::selection {
+  background: var(--champagne);
+  color: var(--vitrine);
+}
+
+/**
+ * Tier 3 fallback: reduced motion. The canvas is not mounted at all — the
+ * static hero must look intentional, not broken (brief §6).
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
