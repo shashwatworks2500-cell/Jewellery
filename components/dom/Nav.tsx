@@ -25,11 +25,23 @@ export function Nav() {
   const { brand, contact } = SAMPLE_DATA;
   const [open, setOpen] = useState(false);
   const [solid, setSolid] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 24);
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setSolid(y > 24);
+      // Hide going down, reveal going up — but never while the drawer is open,
+      // and never near the top where the header is part of the composition.
+      const delta = y - last;
+      if (Math.abs(delta) > 6) {
+        setHidden(y > 220 && delta > 0);
+        last = y;
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -77,9 +89,14 @@ export function Nav() {
         /* Over the full-bleed hero the header must be light; once the page
            scrolls onto the bone ground it flips to ink. Without this the
            wordmark and burger are invisible against the photograph. */
-        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
-          solid ? 'bg-bone/95 text-ink backdrop-blur-md' : 'bg-transparent text-bone'
-        }`}
+        /* Over the hero the header carries its own gradient rather than
+           relying on the photograph for contrast: if the image fails to load,
+           bone-on-bone would be invisible. Lighthouse flags this too. */
+        className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,color] duration-500 ${
+          solid
+            ? 'bg-bone/95 text-ink backdrop-blur-md'
+            : 'bg-gradient-to-b from-ink/70 via-ink/35 to-transparent text-bone'
+        } ${hidden && !open ? '-translate-y-full' : 'translate-y-0'}`}
       >
         <div className="mx-auto flex w-full max-w-[92rem] items-center justify-between px-[var(--shell)] py-4 md:py-5">
           <a href="#top" className="font-display text-lg uppercase tracking-[0.2em] md:text-xl">
@@ -121,6 +138,14 @@ export function Nav() {
             </span>
           </button>
         </div>
+        {/* Scroll progress. Scaled from 0→1 by ScrollTrigger. */}
+        <div
+          aria-hidden="true"
+          data-progress
+          className={`h-px origin-left bg-[color:var(--gold-leaf)] transition-opacity duration-300 ${
+            solid ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
       </header>
 
       {/* Drawer */}

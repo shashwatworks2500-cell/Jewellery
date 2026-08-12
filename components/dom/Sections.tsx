@@ -88,7 +88,7 @@ export function Marquee() {
       className="mt-16 overflow-hidden border-y border-[var(--rule)] py-4 md:mt-24"
       aria-hidden="true"
     >
-      <div className="marquee flex w-max gap-10 pr-10">
+      <div className="marquee flex w-max gap-10 pr-10" data-skew>
         {run.map((t, i) => (
           <span key={i} className="eyebrow whitespace-nowrap text-stone">
             {t} <span className="ml-10 text-gold">◆</span>
@@ -103,7 +103,7 @@ export function Marquee() {
 
 function Card({ item, onOpen }: { item: ShopItem; onOpen: () => void }) {
   return (
-    <article className="group flex w-[78vw] shrink-0 flex-col snap-start sm:w-auto" data-reveal>
+    <article className="group flex w-[78vw] shrink-0 flex-col snap-start sm:w-auto">
       <button type="button" onClick={onOpen} className="block w-full text-left">
         <div className="img-frame relative aspect-[4/5] w-full">
           <Image
@@ -148,7 +148,7 @@ export function Collection() {
       <div className={shell}>
         <div className="max-w-2xl" data-reveal>
           <p className="eyebrow text-gold">{shop.eyebrow}</p>
-          <h2 id="shop-title" className="display mt-4">
+          <h2 id="shop-title" className="display mt-4" data-split>
             {shop.headline}
           </h2>
           <p className="mt-5 text-stone">{shop.body}</p>
@@ -161,6 +161,7 @@ export function Collection() {
       <div className="mt-10 md:mt-14">
         <div
           className={`flex snap-x snap-mandatory scroll-px-[var(--shell)] gap-5 overflow-x-auto px-[var(--shell)] pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-auto sm:grid sm:max-w-[92rem] sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 sm:overflow-visible lg:grid-cols-3`}
+          data-stagger
         >
           {shop.items.map((item) => (
             <Card key={item.id} item={item} onOpen={() => setActive(item)} />
@@ -192,13 +193,13 @@ export function Process() {
       <div className={shell}>
         <div className="max-w-2xl" data-reveal>
           <p className="eyebrow text-gold">{process.eyebrow}</p>
-          <h2 id="process-title" className="display mt-4">
+          <h2 id="process-title" className="display mt-4" data-split>
             {process.headline}
           </h2>
         </div>
-        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
           {process.steps.map((s) => (
-            <li key={s.n} className="border-t border-[var(--rule)] pt-5" data-reveal>
+            <li key={s.n} className="border-t border-[var(--rule)] pt-5">
               <p className="font-numeral text-sm text-gold">{s.n}</p>
               <h3 className="font-display mt-2 text-2xl">{s.title}</h3>
               <p className="mt-2.5 text-sm text-stone">{s.body}</p>
@@ -217,7 +218,7 @@ export function Bridal() {
   return (
     <section id="bridal" className="on-ink bg-ink py-20 text-bone md:py-32" aria-labelledby="bridal-title">
       <div className={`${shell} grid items-center gap-10 md:grid-cols-2 md:gap-16`}>
-        <div className="img-frame relative aspect-[5/4] w-full md:order-2">
+        <div className="img-frame relative aspect-[5/4] w-full md:order-2" data-img-reveal>
           <Image
             src={img(bridal.image.src)}
             alt={bridal.image.alt}
@@ -230,7 +231,7 @@ export function Bridal() {
         </div>
         <div className="md:order-1" data-reveal>
           <p className="eyebrow text-[color:var(--gold-leaf)]">{bridal.eyebrow}</p>
-          <h2 id="bridal-title" className="display mt-4">
+          <h2 id="bridal-title" className="display mt-4" data-split>
             {bridal.headline}
           </h2>
           <p className="mt-5 max-w-[46ch] text-bone/75">{bridal.body}</p>
@@ -252,12 +253,12 @@ export function Assurances() {
   return (
     <section className="py-20 md:py-28" aria-labelledby="assurances-title">
       <div className={shell}>
-        <h2 id="assurances-title" className="display max-w-2xl" data-reveal>
+        <h2 id="assurances-title" className="display max-w-2xl" data-split>
           Proof, not persuasion
         </h2>
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4" data-stagger>
           {SAMPLE_DATA.assurances.map((a, i) => (
-            <div key={a.title} className="border-t border-[var(--rule)] pt-5" data-reveal>
+            <div key={a.title} className="border-t border-[var(--rule)] pt-5">
               <p className="font-numeral text-sm text-gold">0{i + 1}</p>
               <h3 className="font-display mt-2 text-2xl">{a.title}</h3>
               <p className="mt-2.5 text-sm text-stone">{a.body}</p>
@@ -276,7 +277,7 @@ export function Gifting() {
   return (
     <section className="py-20 md:py-32" aria-labelledby="gifting-title">
       <div className={`${shell} grid items-center gap-10 md:grid-cols-2 md:gap-16`}>
-        <div className="img-frame relative aspect-[5/4] w-full">
+        <div className="img-frame relative aspect-[5/4] w-full" data-img-reveal>
           <Image
             src={img(gifting.image.src)}
             alt={gifting.image.alt}
@@ -289,7 +290,7 @@ export function Gifting() {
         </div>
         <div data-reveal>
           <p className="eyebrow text-gold">{gifting.eyebrow}</p>
-          <h2 id="gifting-title" className="display mt-4">
+          <h2 id="gifting-title" className="display mt-4" data-split>
             {gifting.headline}
           </h2>
           <p className="mt-5 max-w-[46ch] text-stone">{gifting.body}</p>
@@ -309,7 +310,7 @@ export function Faq() {
       <div className={`${shell} grid gap-10 md:grid-cols-12 md:gap-16`}>
         <div className="md:col-span-4" data-reveal>
           <p className="eyebrow text-gold">{faq.eyebrow}</p>
-          <h2 id="faq-title" className="display mt-4">
+          <h2 id="faq-title" className="display mt-4" data-split>
             {faq.headline}
           </h2>
         </div>
@@ -366,7 +367,7 @@ export function Visit() {
         <div className="grid gap-10 md:grid-cols-12 md:gap-16">
           <div className="md:col-span-7" data-reveal>
             <p className="eyebrow text-gold">{appointment.eyebrow}</p>
-            <h2 id="visit-title" className="display mt-4">
+            <h2 id="visit-title" className="display mt-4" data-split>
               {appointment.headline}
             </h2>
             <p className="mt-5 max-w-[46ch] text-stone">{appointment.body}</p>
@@ -456,7 +457,7 @@ export function Footer() {
         </div>
       </div>
       <div className={`${shell} mt-12 border-t border-[var(--rule-invert)] pt-6`}>
-        <p className="text-xs text-bone/40">
+        <p className="text-xs text-bone/60">
           Sample site. All details are placeholder data; photography is stock and not the pieces
           described.
         </p>

@@ -197,7 +197,10 @@ html.lenis body {
   to   { transform: translateX(-50%); }
 }
 .marquee {
-  animation: marquee-run 42s linear infinite;
+  /* --mq-speed is written by the scroll handler; the marquee accelerates with
+     scroll momentum and settles back to its resting pace. */
+  animation: marquee-run calc(42s / var(--mq-speed, 1)) linear infinite;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
