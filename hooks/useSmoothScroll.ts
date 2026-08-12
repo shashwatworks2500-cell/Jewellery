@@ -40,6 +40,8 @@ export function useSmoothScroll(enabled: boolean) {
 
     const ctx = gsap.context(() => {
       if (reduced) return;
+
+      // Block reveals.
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
         gsap.from(el, {
           opacity: 0,
@@ -48,6 +50,37 @@ export function useSmoothScroll(enabled: boolean) {
           ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 88%', once: true },
         });
+      });
+
+      // Hero line stagger — set once on load, not scroll-driven.
+      const lines = gsap.utils.toArray<HTMLElement>('[data-line]');
+      if (lines.length) {
+        gsap.from(lines, {
+          opacity: 0,
+          y: 18,
+          duration: 1,
+          ease: 'power3.out',
+          stagger: 0.09,
+          delay: 0.15,
+        });
+      }
+
+      /* Image parallax. Deliberately small (6%) and applied to the <img> inside
+         an overflow-hidden frame, so nothing ever detaches from its caption or
+         leaves a gap at the frame edge. */
+      // Skipped below 768px: parallax on the hero image promotes the LCP
+      // element to its own layer and delays first paint on phones.
+      const wide = window.matchMedia('(min-width: 768px)').matches;
+      if (wide) gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
+        gsap.fromTo(
+          el,
+          { yPercent: -3, scale: 1.06 },
+          {
+            yPercent: 3,
+            ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+          },
+        );
       });
     });
 

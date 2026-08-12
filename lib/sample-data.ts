@@ -112,8 +112,41 @@ export const SAMPLE_DATA = {
         image: { src: '/images/rings-book.jpg', alt: 'Gold stacking rings arranged on a book.' },
       },
     ],
-    primaryCta: { label: 'Reserve for a viewing', href: '#appointment' },
+    primaryCta: { label: 'Reserve for a viewing', href: '#visit' },
     secondaryCta: { label: 'Ask on WhatsApp', href: 'https://wa.me/919999900000' },
+  },
+
+  /** How a commission actually runs. Answers "what happens if I walk in?" */
+  process: {
+    eyebrow: 'How it works',
+    headline: 'Four steps, no surprises',
+    steps: [
+      { n: '01', title: 'Tell us the occasion', body: 'A message or a call. We ask about the ceremony, the outfit and the budget range before we show anything.' },
+      { n: '02', title: 'See it in the room', body: 'We lay out what fits. Certificates on the table, under daylight lamps, no pressure to decide.' },
+      { n: '03', title: 'Drawing and wax', body: 'For custom work you approve a drawing and then a wax model. Nothing is cut until you sign it off.' },
+      { n: '04', title: 'Finished and checked', body: 'Setter, polisher, then a final check against the certificate. Collected in store or delivered by hand.' },
+    ],
+  },
+
+  /** Objection handling. The questions that decide the sale. */
+  faq: {
+    eyebrow: 'Before you ask',
+    headline: 'The questions people actually ask',
+    items: [
+      { q: 'Why is there no price on the site?', a: 'Gold is quoted daily and a diamond is priced on its own certificate. A number published today would be wrong tomorrow, so we quote against the day’s rate when you enquire — in writing, itemised.' },
+      { q: 'How do I know the diamond is what you say it is?', a: 'Every diamond comes with an IGI or GIA report, and the report number is printed on your invoice. You are welcome to verify it on the lab’s own site before paying.' },
+      { q: 'Is the gold really 916?', a: 'The BIS hallmark is struck at an assaying centre, not by us. You can see the mark under our loupe, and we will show you where it is on the piece.' },
+      { q: 'Can you make something from a photograph?', a: 'Usually. We will tell you honestly if a design will not hold up in wear, and suggest the change rather than making something that breaks.' },
+      { q: 'What happens if the size is wrong?', a: 'First resize is free, within a year, on anything we made. Chains and bangles we adjust while you wait where the design allows.' },
+      { q: 'Do you buy back?', a: 'We buy back our own gold at the day’s rate for as long as the piece exists. Bring the invoice.' },
+    ],
+  },
+
+  gifting: {
+    eyebrow: 'Gifting',
+    headline: 'Wrapped, boxed, and quietly done',
+    body: 'Every piece leaves in a lined box with its certificate and a hand-written card if you want one. We keep a note of what you bought, so next year we can tell you what would go with it.',
+    image: { src: '/images/rings-stone.jpg', alt: 'Gold rings resting against a pale stone.' },
   },
 
   assurances: [
@@ -151,7 +184,7 @@ export const SAMPLE_DATA = {
   },
 
   appointment: {
-    eyebrow: 'Appointments',
+    eyebrow: 'Visit us',
     headline: 'Come and see them in person',
     body: 'Private viewings run all week. Tell us what you are looking for and we will have it on the table when you arrive.',
     primaryCta: { label: 'Book an appointment', href: 'tel:+919999900000' },

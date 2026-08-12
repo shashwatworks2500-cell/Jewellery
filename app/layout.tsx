@@ -71,6 +71,25 @@ const jsonLd = {
   },
   telephone: contact.phone,
   foundingDate: String(brand.established),
+  areaServed: brand.city,
+  openingHoursSpecification: contact.hours.map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    description: h.days,
+    opens: h.open,
+    closes: h.close,
+  })),
+  // Products are listed without offers: there are no prices on this site by
+  // design, and emitting an Offer without a price would be invalid markup.
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: SAMPLE_DATA.shop.headline,
+    itemListElement: SAMPLE_DATA.shop.items.map((it) => ({
+      '@type': 'Product',
+      name: it.name,
+      category: it.category,
+      description: it.detail,
+    })),
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

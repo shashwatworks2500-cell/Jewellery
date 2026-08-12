@@ -162,7 +162,17 @@ html.lenis body {
   transform: scale(1.04);
 }
 
+/* Marquee: translate half the duplicated run for a seamless loop. */
+@keyframes marquee-run {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee {
+  animation: marquee-run 42s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .marquee { animation: none; }
   *,
   *::before,
   *::after {

@@ -1,36 +1,37 @@
 'use client';
 
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
+import { Nav } from '@/components/dom/Nav';
 import {
-  Header,
   Hero,
-  Shop,
-  Assurances,
+  Marquee,
+  Collection,
+  Process,
   Bridal,
-  Workshop,
-  Appointment,
+  Assurances,
+  Gifting,
+  Faq,
+  Visit,
   Footer,
   MobileCta,
 } from '@/components/dom/Sections';
 
-/**
- * No canvas, no 3D. The pieces are photography now, so the whole WebGL stack
- * (three, r3f, drei, postprocessing, zustand) was removed rather than left
- * installed and unused — 78 packages gone.
- */
 export function Experience() {
   useSmoothScroll(true);
 
   return (
     <>
-      <Header />
+      <Nav />
       <main id="main">
         <Hero />
-        <Shop />
-        <Assurances />
+        <Marquee />
+        <Collection />
+        <Process />
         <Bridal />
-        <Workshop />
-        <Appointment />
+        <Assurances />
+        <Gifting />
+        <Faq />
+        <Visit />
       </main>
       <Footer />
       <MobileCta />
