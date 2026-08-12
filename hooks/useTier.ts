@@ -35,9 +35,14 @@ function detectTier(): Tier {
 
   const coarse = window.matchMedia('(pointer: coarse)').matches;
   const narrow = window.innerWidth < 900;
-  const fewCores = (navigator.hardwareConcurrency ?? 8) <= 4;
+  // Thresholds are deliberately low. An earlier version demoted anything with
+  // <= 4 cores, which silently sent ordinary 4-core laptops down the reduced
+  // path — they never saw the transmission material at all. Core count alone is
+  // a poor proxy for GPU capability; a coarse pointer or a narrow viewport is a
+  // far better signal for "this is a phone".
+  const fewCores = (navigator.hardwareConcurrency ?? 8) <= 2;
   const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
-  const lowMemory = typeof deviceMemory === 'number' && deviceMemory <= 4;
+  const lowMemory = typeof deviceMemory === 'number' && deviceMemory <= 2;
 
   if (coarse || narrow || fewCores || lowMemory) return 'reduced';
   return 'full';

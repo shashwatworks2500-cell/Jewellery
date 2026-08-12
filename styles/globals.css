@@ -32,7 +32,10 @@ html {
 }
 
 body {
-  background-color: var(--vitrine);
+  /* NO background here. The ground colour lives on <html> only.
+     An opaque background on <body> paints over a fixed canvas sitting behind
+     it in the stacking order, which silently hides the entire 3D scene. */
+  background-color: transparent;
   color: var(--platinum);
   font-family: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
   font-weight: 300;

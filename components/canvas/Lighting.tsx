@@ -22,10 +22,14 @@ export function Lighting({ reduced = false }: { reduced?: boolean }) {
             somewhere dark to fall off into. */}
         <color attach="background" args={[HEX.vitrine]} />
 
-        {/* Key: large soft box, high and slightly camera-left. */}
+        {/* Key: large soft box, high and slightly camera-left.
+            Intensity is deliberately high against the near-black environment
+            ground: a transmissive stone can only refract CONTRAST. A flatly lit
+            environment is what makes a diamond read as grey plastic — there is
+            nothing bright for the facets to bend into the eye. */}
         <Lightformer
           form="rect"
-          intensity={5}
+          intensity={14}
           position={[-2.4, 3.2, 2.2]}
           rotation={[-Math.PI / 3.2, 0, 0]}
           scale={[7, 5, 1]}
@@ -36,7 +40,7 @@ export function Lighting({ reduced = false }: { reduced?: boolean }) {
             highlights along the girdle and the kada's bevel. */}
         <Lightformer
           form="rect"
-          intensity={7}
+          intensity={18}
           position={[3.4, 0.6, -1.6]}
           rotation={[0, -Math.PI / 2.4, 0]}
           scale={[0.35, 4, 1]}
@@ -45,7 +49,7 @@ export function Lighting({ reduced = false }: { reduced?: boolean }) {
         {!reduced && (
           <Lightformer
             form="rect"
-            intensity={5.5}
+            intensity={13}
             position={[-3.2, -0.4, -1.9]}
             rotation={[0, Math.PI / 2.4, 0]}
             scale={[0.3, 3.4, 1]}

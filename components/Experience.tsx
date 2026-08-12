@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { SAMPLE_DATA } from '@/lib/sample-data';
 import { useTier } from '@/hooks/useTier';
+import { useSceneStore } from '@/lib/store';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import {
   Header,
@@ -26,11 +27,14 @@ const Scene = dynamic(() => import('@/components/canvas/Scene').then((m) => m.Sc
 });
 
 export function Experience() {
-  const heroRef = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const pieceRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const tier = useTier();
+  const tierResolved = useSceneStore((s) => s.tierResolved);
   const is3D = tier !== 'static';
+  // Never animate against an unresolved (guessed) tier — see store.tierResolved.
+  const animate = is3D && tierResolved;
 
   // Lenis only runs where motion is wanted. On the static tier the page uses
   // plain native scrolling, which is the correct behaviour for
@@ -57,28 +61,33 @@ export function Experience() {
         />
       )}
 
-      <Header />
+      {/* All DOM sits above the fixed canvas. Backgrounds here must stay
+          transparent or they will hide the scene. */}
+      <div className="relative z-10">
+        <Header />
 
-      <main id="main">
-        <Hero ref={heroRef} />
+        <main id="main">
+        <Hero ref={heroRef} animate={animate} />
 
         {SAMPLE_DATA.pieces.map((piece, i) => (
           <PieceSection
             key={piece.id}
             piece={piece}
             index={i}
+            animate={animate}
             setRef={(el) => {
               pieceRefs.current[piece.id] = el;
             }}
           />
         ))}
 
-        <Assurances />
-        <Workshop />
-        <Appointment />
-      </main>
+          <Assurances />
+          <Workshop />
+          <Appointment />
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
       <InspectPanel />
     </>
   );

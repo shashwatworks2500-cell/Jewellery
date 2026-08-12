@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" fill="#0B0E14"/>
+  <!-- Round-brilliant in profile: table, crown, girdle, pavilion — the same
+       silhouette the hero geometry is built from. -->
+  <g fill="none" stroke="#D8B778" stroke-width="1.1" stroke-linejoin="round">
+    <path d="M6 13 L11 8 L21 8 L26 13 L16 25 Z"/>
+    <path d="M6 13 L26 13"/>
+    <path d="M11 8 L13 13 L16 25"/>
+    <path d="M21 8 L19 13 L16 25"/>
+  </g>
+</svg>

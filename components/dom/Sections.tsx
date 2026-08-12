@@ -1,8 +1,10 @@
 'use client';
 
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { SAMPLE_DATA } from '@/lib/sample-data';
 import { useSceneStore } from '@/lib/store';
+import { useIntroTimeline } from '@/hooks/useIntroTimeline';
+import { usePieceTimeline } from '@/hooks/usePieceTimeline';
 
 /**
  * All copy comes from SAMPLE_DATA — no hardcoded user-facing strings (§1).
@@ -31,18 +33,40 @@ export function Header() {
  * diamond has something recognisable to refract — and so the LCP element is
  * text, not the canvas (§6).
  */
-export const Hero = forwardRef<HTMLElement>(function Hero(_props, ref) {
+export const Hero = forwardRef<HTMLDivElement, { animate: boolean }>(function Hero(
+  { animate },
+  ref,
+) {
   const { hero } = SAMPLE_DATA;
+  const eyebrow = useRef<HTMLParagraphElement>(null);
+  const wordmark = useRef<HTMLHeadingElement>(null);
+  const subhead = useRef<HTMLParagraphElement>(null);
+  const ctas = useRef<HTMLDivElement>(null);
+
+  // Elements are rendered visible; the timeline animates FROM a hidden state at
+  // runtime. If JS never runs, or on the static tier, the hero is simply there.
+  useIntroTimeline({ eyebrow, wordmark, subhead, ctas }, animate);
+
   return (
-    <section
-      ref={ref}
-      className="relative flex min-h-[100svh] flex-col items-center justify-center text-center"
-    >
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center text-center">
+      {/* The stone gets its own stage above the type.
+          Earlier this View tracked the whole hero section, so the diamond
+          rendered full-bleed behind the copy — it swallowed the wordmark and
+          dropped the subhead below AA contrast. A jeweller photographs the
+          piece and sets the type beneath it; so does this. */}
+      <div ref={ref} aria-hidden="true" className="h-[34svh] w-full md:h-[38svh]" />
+
       <div className={`${shell} relative z-10 flex flex-col items-center`}>
-        <p className="eyebrow mb-8">{hero.eyebrow}</p>
-        <h1 className="wordmark text-platinum">{hero.headline}</h1>
-        <p className="mt-10 max-w-measure text-muted">{hero.subhead}</p>
-        <div className="mt-12 flex flex-col gap-4 sm:flex-row">
+        <p ref={eyebrow} className="eyebrow mb-8">
+          {hero.eyebrow}
+        </p>
+        <h1 ref={wordmark} className="wordmark text-platinum">
+          {hero.headline}
+        </h1>
+        <p ref={subhead} className="mt-10 max-w-measure text-muted">
+          {hero.subhead}
+        </p>
+        <div ref={ctas} className="mt-12 flex flex-col gap-4 sm:flex-row">
           <a
             href={hero.primaryCta.href}
             className="border border-champagne px-8 py-4 text-champagne text-xs uppercase tracking-[0.24em] transition-colors hover:bg-champagne hover:text-vitrine"
@@ -65,17 +89,23 @@ export function PieceSection({
   piece,
   index,
   setRef,
+  animate,
 }: {
   piece: (typeof SAMPLE_DATA)['pieces'][number];
   index: number;
   setRef: (el: HTMLElement | null) => void;
+  animate: boolean;
 }) {
   const setInspecting = useSceneStore((s) => s.setInspecting);
+  const sectionRef = useRef<HTMLElement>(null);
   // Alternate sides so the eye zigzags instead of scanning a row.
   const flip = index % 2 === 1;
 
+  usePieceTimeline(piece.id, sectionRef, animate);
+
   return (
     <section
+      ref={sectionRef}
       id={`piece-${piece.id}`}
       className={`${shell} flex min-h-[100svh] flex-col items-center gap-10 py-24 md:flex-row md:gap-16 ${
         flip ? 'md:flex-row-reverse' : ''
