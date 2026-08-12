@@ -14,19 +14,46 @@ export function Hero() {
   const { hero } = SAMPLE_DATA;
   return (
     <section id="top" className="relative isolate min-h-[100svh] w-full overflow-hidden">
-      {/* Full-bleed photograph. On a phone the product has to be the first
-          thing you see — the previous split layout buried it under a screen of
-          type, which is what made this feel lifeless. */}
+      {/* Full-bleed film. On a phone the product has to be the first thing you
+          see — a split layout buries it under a screen of type.
+
+          Two modes. If real footage exists, a <video> plays it with the first
+          still as poster. Otherwise three stills crossfade on a slow push-in,
+          which reads as one moving shot and costs no extra bytes, because those
+          images are already loaded. */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src={img(hero.image.src)}
-          alt={hero.image.alt}
-          fill
-          priority
-          quality={70}
-          sizes="100vw"
-          className="hero-drift object-cover object-center"
-        />
+        {hero.video ? (
+          <video
+            className="h-full w-full object-cover object-center"
+            poster={hero.image.src}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          >
+            <source src={hero.video} type="video/mp4" />
+          </video>
+        ) : (
+          hero.sequence.map((frame, i) => (
+            <Image
+              key={frame.src}
+              src={img(frame.src)}
+              alt={i === 0 ? frame.alt : ''}
+              aria-hidden={i === 0 ? undefined : true}
+              fill
+              /* Only the first frame is priority — it is the LCP element.
+                 The others are ordinary lazy images that arrive long before
+                 their turn at 7s and 14s. */
+              priority={i === 0}
+              loading={i === 0 ? undefined : 'lazy'}
+              quality={70}
+              sizes="100vw"
+              className="hero-frame object-cover object-center"
+            />
+          ))
+        )}
         {/* Scrim, not a flat overlay: type stays legible at the bottom while
             the stones keep their highlights up top. */}
         <div className="hero-scrim absolute inset-0" />

@@ -47,6 +47,26 @@ export const SAMPLE_DATA = {
     primaryCta: { label: 'Book a bridal appointment', href: '#appointment' },
     secondaryCta: { label: 'View the collection', href: '#collection' },
     image: { src: '/images/hero.jpg', alt: 'Diamond and gold earrings lit against a dark ground.' },
+
+    /* Hero film.
+     *
+     * `video` is null: no licensed jewellery footage is available for this
+     * pitch. Drop an H.264 MP4 at /public/video/hero.mp4 and set this to that
+     * path — the hero switches to a real <video> automatically, keeping the
+     * poster, autoplay/muted/loop/playsInline and the reduced-motion guard.
+     * Use MP4/H.264, not WebM: iOS Safari before 17.4 will not decode WebM and
+     * would sit on the poster.
+     *
+     * Until then `sequence` drives a crossfading film built from the stills we
+     * already load — the same content a synthesised video would have contained,
+     * at no extra bytes.
+     */
+    video: null as string | null,
+    sequence: [
+      { src: '/images/hero.jpg', alt: 'Diamond and gold earrings lit against a dark ground.' },
+      { src: '/images/bracelet-diamond.jpg', alt: 'A diamond bracelet catching light against black.' },
+      { src: '/images/solitaire.jpg', alt: 'A brilliant-cut solitaire ring on a dark presentation box.' },
+    ],
     /* Trust row sits directly under the CTA — the three objections a buyer
        raises before they walk in. */
     trust: [
