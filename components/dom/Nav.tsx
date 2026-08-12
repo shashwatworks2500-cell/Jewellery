@@ -74,8 +74,11 @@ export function Nav() {
   return (
     <>
       <header
+        /* Over the full-bleed hero the header must be light; once the page
+           scrolls onto the bone ground it flips to ink. Without this the
+           wordmark and burger are invisible against the photograph. */
         className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
-          solid ? 'bg-bone/95 backdrop-blur-md' : 'bg-transparent'
+          solid ? 'bg-bone/95 text-ink backdrop-blur-md' : 'bg-transparent text-bone'
         }`}
       >
         <div className="mx-auto flex w-full max-w-[92rem] items-center justify-between px-[var(--shell)] py-4 md:py-5">
@@ -85,11 +88,18 @@ export function Nav() {
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
             {LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="eyebrow transition-colors hover:text-gold">
+              <a key={l.href} href={l.href} className="eyebrow transition-colors hover:opacity-70">
                 {l.label}
               </a>
             ))}
-            <a href="#visit" className="btn-primary !px-5 !py-2.5 !text-[0.62rem]">
+            <a
+              href="#visit"
+              className={`inline-flex items-center justify-center px-5 py-2.5 text-[0.62rem] uppercase tracking-[0.22em] transition-colors ${
+                solid
+                  ? 'bg-ink text-bone hover:bg-transparent hover:text-ink border border-ink'
+                  : 'border border-bone/50 text-bone hover:bg-bone hover:text-ink'
+              }`}
+            >
               Book a viewing
             </a>
           </nav>
@@ -105,9 +115,9 @@ export function Nav() {
           >
             <span className="sr-only">Open menu</span>
             <span aria-hidden="true" className="flex flex-col gap-[5px]">
-              <span className="block h-px w-6 bg-ink" />
-              <span className="block h-px w-6 bg-ink" />
-              <span className="block h-px w-4 bg-ink" />
+              <span className="block h-px w-6 bg-current" />
+              <span className="block h-px w-6 bg-current" />
+              <span className="block h-px w-4 bg-current" />
             </span>
           </button>
         </div>
@@ -135,7 +145,7 @@ export function Nav() {
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className={`absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col bg-bone px-7 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6 transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col bg-bone text-ink px-7 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6 transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             open ? 'translate-x-0' : 'translate-x-full'
           }`}
         >

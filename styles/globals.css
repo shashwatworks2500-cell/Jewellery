@@ -14,11 +14,21 @@
   --stone: #5f594f;
   --gold: #6f5426;
   --gold-leaf: #c9a227;
+  /* Channel triplets so Tailwind's /opacity modifiers work. A plain
+     `var(--bone)` cannot take an alpha, so `bg-bone/95` silently resolved to
+     transparent — which left the sticky bar and header with no background. */
+  --bone-rgb: 246 243 238;
+  --linen-rgb: 237 232 223;
+  --ink-rgb: 22 19 15;
+  --stone-rgb: 95 89 79;
+  --gold-rgb: 111 84 38;
+  --gold-leaf-rgb: 201 162 39;
+
   --rule: rgba(22, 19, 15, 0.14);
   --rule-invert: rgba(246, 243, 238, 0.18);
 
   /* Type scale — clamp-based, unchanged. */
-  --step-wordmark: clamp(3rem, 9vw, 7.5rem);
+  --step-wordmark: clamp(3.6rem, 16vw, 8.5rem);
   --step-display: clamp(2rem, 4.6vw, 4rem);
   --step-sub: clamp(1.35rem, 2.4vw, 2rem);
   --step-numeral: clamp(1rem, 1.9vw, 1.4rem);
@@ -162,6 +172,25 @@ html.lenis body {
   transform: scale(1.04);
 }
 
+/* Hero scrim. Two stops: a heavy base so type is guaranteed legible, and a
+   light top wash so the header wordmark reads against bright photography.
+   Measured: bone on the base stop lands ~15:1. */
+.hero-scrim {
+  background:
+    linear-gradient(to top, rgba(22, 19, 15, 0.97) 0%, rgba(22, 19, 15, 0.92) 30%,
+      rgba(22, 19, 15, 0.74) 48%, rgba(22, 19, 15, 0.30) 70%, rgba(22, 19, 15, 0.42) 100%);
+}
+
+/* Slow drift. 14s, 1.06 scale — enough to feel alive, not enough to notice
+   as motion. Killed under prefers-reduced-motion. */
+@keyframes hero-drift {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to   { transform: scale(1.09) translate3d(0, -1.2%, 0); }
+}
+.hero-drift {
+  animation: hero-drift 14s ease-out forwards;
+}
+
 /* Marquee: translate half the duplicated run for a seamless loop. */
 @keyframes marquee-run {
   from { transform: translateX(0); }
@@ -173,6 +202,7 @@ html.lenis body {
 
 @media (prefers-reduced-motion: reduce) {
   .marquee { animation: none; }
+  .hero-drift { animation: none; transform: scale(1.02); }
   *,
   *::before,
   *::after {

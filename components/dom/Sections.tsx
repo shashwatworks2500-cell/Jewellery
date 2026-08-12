@@ -13,62 +13,59 @@ const shell = 'mx-auto w-full max-w-[92rem] px-[var(--shell)]';
 export function Hero() {
   const { hero } = SAMPLE_DATA;
   return (
-    <section id="top" className="relative pt-24 md:pt-32">
-      <div className={`${shell} grid items-center gap-10 md:grid-cols-12 md:gap-14`}>
-        <div className="md:col-span-6 lg:col-span-5">
-          <p className="eyebrow text-gold" data-line>
-            {hero.eyebrow}
-          </p>
-          <h1 className="wordmark mt-5" data-line>
-            {hero.headline}
-          </h1>
-          <p className="subhead mt-5 max-w-[24ch]" data-line>
-            {hero.subhead}
-          </p>
-          <p className="mt-5 max-w-[44ch] text-stone" data-line>
-            {hero.body}
-          </p>
+    <section id="top" className="relative isolate min-h-[100svh] w-full overflow-hidden">
+      {/* Full-bleed photograph. On a phone the product has to be the first
+          thing you see — the previous split layout buried it under a screen of
+          type, which is what made this feel lifeless. */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src={img(hero.image.src)}
+          alt={hero.image.alt}
+          fill
+          priority
+          quality={70}
+          sizes="100vw"
+          className="hero-drift object-cover object-center"
+        />
+        {/* Scrim, not a flat overlay: type stays legible at the bottom while
+            the stones keep their highlights up top. */}
+        <div className="hero-scrim absolute inset-0" />
+      </div>
 
-          {/* Primary action first and full-width on mobile — the thumb target
-              matters more than the symmetry here. */}
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row" data-line>
-            <a href="#visit" className="btn-primary w-full sm:w-auto">
-              {hero.primaryCta.label}
-            </a>
-            <a href={hero.secondaryCta.href} className="btn-secondary w-full sm:w-auto">
-              {hero.secondaryCta.label}
-            </a>
-          </div>
+      <div className="relative flex min-h-[100svh] flex-col justify-end pb-28 pt-28 md:justify-center md:pb-24">
+        <div className={shell}>
+          <div className="max-w-3xl">
+            {/* bone, not gold: gold-on-gold over the photograph was
+                unreadable. The gold survives as the rule beside it. */}
+            <p className="eyebrow flex items-center gap-3 text-bone/90" data-line>
+              <span aria-hidden="true" className="block h-px w-6 bg-[color:var(--gold-leaf)]" />
+              {hero.eyebrow}
+            </p>
+            <h1 className="wordmark mt-4 text-bone" data-line>
+              {hero.headline}
+            </h1>
+            <p className="subhead mt-4 max-w-[22ch] text-bone md:max-w-[26ch]" data-line>
+              {hero.subhead}
+            </p>
 
-          <ul className="mt-9 grid gap-2 border-t border-[var(--rule)] pt-6 text-sm text-stone sm:grid-cols-3">
-            {hero.trust.map((t) => (
-              <li key={t} className="flex items-start gap-2">
-                <span aria-hidden="true" className="mt-[0.55em] block h-px w-3 shrink-0 bg-gold" />
-                {t}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="md:col-span-6 lg:col-span-7">
-          <div className="img-frame relative aspect-[3/2] w-full md:aspect-[4/5]">
-            {/* No blur placeholder here on purpose: this image is `priority`,
-                so it never loads late, and the inline base64 would only add
-                bytes to the initial HTML ahead of the LCP paint. Below-the-fold
-                images keep their placeholders. */}
-            <Image
-              src={img(hero.image.src)}
-              alt={hero.image.alt}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 58vw"
-              quality={70}
-              className="object-cover"
-              data-parallax
-            />
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row" data-line>
+              <a
+                href="#visit"
+                className="inline-flex w-full items-center justify-center bg-bone px-9 py-4 text-[0.72rem] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-[color:var(--gold-leaf)] sm:w-auto"
+              >
+                {hero.primaryCta.label}
+              </a>
+              <a
+                href={hero.secondaryCta.href}
+                className="inline-flex w-full items-center justify-center border border-bone/40 px-9 py-4 text-[0.72rem] uppercase tracking-[0.22em] text-bone transition-colors hover:border-bone sm:w-auto"
+              >
+                {hero.secondaryCta.label}
+              </a>
+            </div>
           </div>
         </div>
       </div>
+
     </section>
   );
 }

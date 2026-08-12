@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bone: 'var(--bone)',
-        linen: 'var(--linen)',
-        ink: 'var(--ink)',
-        stone: 'var(--stone)',
-        gold: 'var(--gold)',
-        'gold-leaf': 'var(--gold-leaf)',
+        bone: 'rgb(var(--bone-rgb) / <alpha-value>)',
+        linen: 'rgb(var(--linen-rgb) / <alpha-value>)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
+        stone: 'rgb(var(--stone-rgb) / <alpha-value>)',
+        gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+        'gold-leaf': 'rgb(var(--gold-leaf-rgb) / <alpha-value>)',
       },
       fontFamily: {
         display: ['var(--font-italiana)', 'ui-serif', 'Georgia', 'serif'],
