@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        vitrine: 'var(--vitrine)',
-        'vitrine-2': 'var(--vitrine-2)',
-        champagne: 'var(--champagne)',
-        platinum: 'var(--platinum)',
-        ice: 'var(--ice)',
-        muted: 'var(--muted)',
+        bone: 'var(--bone)',
+        linen: 'var(--linen)',
+        ink: 'var(--ink)',
+        stone: 'var(--stone)',
+        gold: 'var(--gold)',
+        'gold-leaf': 'var(--gold-leaf)',
       },
       fontFamily: {
         display: ['var(--font-italiana)', 'ui-serif', 'Georgia', 'serif'],

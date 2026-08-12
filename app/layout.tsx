@@ -52,8 +52,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: COLORS.vitrine,
-  colorScheme: 'dark',
+  themeColor: COLORS.bone,
+  colorScheme: 'light',
 };
 
 /** JewelryStore JSON-LD, built from SAMPLE_DATA — no duplicated literals. */

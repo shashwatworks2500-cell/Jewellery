@@ -1,290 +1,329 @@
 'use client';
 
-import { forwardRef, useEffect, useRef } from 'react';
-import { SAMPLE_DATA } from '@/lib/sample-data';
-import { useSceneStore } from '@/lib/store';
-import { useIntroTimeline } from '@/hooks/useIntroTimeline';
-import { usePieceTimeline } from '@/hooks/usePieceTimeline';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import { SAMPLE_DATA, type ShopItem } from '@/lib/sample-data';
 
-/**
- * All copy comes from SAMPLE_DATA — no hardcoded user-facing strings (§1).
- * Voice: quiet, specific, confident. CTAs name their action.
- */
+const shell = 'px-[var(--shell)] mx-auto w-full max-w-[92rem]';
 
-const shell = 'px-shell mx-auto w-full max-w-wide';
+/* ---------------------------------------------------------------- header - */
 
 export function Header() {
+  const { brand, shop } = SAMPLE_DATA;
+  const [solid, setSolid] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setSolid(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <header className={`${shell} fixed top-0 left-0 right-0 z-40 py-5`}>
-      <div className="flex items-baseline justify-between border-b border-[var(--rule)] pb-4">
-        <span className="font-display text-lg tracking-[0.18em] uppercase">
-          {SAMPLE_DATA.brand.wordmark}
-        </span>
-        <a href="#appointment" className="eyebrow hover:text-platinum transition-colors">
-          Appointments
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-500 ${
+        solid ? 'bg-bone/95 backdrop-blur-sm' : 'bg-transparent'
+      }`}
+    >
+      <div className={`${shell} flex items-center justify-between py-5`}>
+        <a href="#top" className="font-display text-xl uppercase tracking-[0.2em]">
+          {brand.wordmark}
         </a>
+        <nav className="flex items-center gap-8">
+          <a href="#collection" className="eyebrow hidden sm:block hover:text-gold">
+            Collection
+          </a>
+          <a href="#bridal" className="eyebrow hidden sm:block hover:text-gold">
+            Bridal
+          </a>
+          <a href={shop.primaryCta.href} className="btn-primary !px-5 !py-2.5 !text-[0.62rem]">
+            Book a viewing
+          </a>
+        </nav>
       </div>
     </header>
   );
 }
 
+/* ------------------------------------------------------------------ hero - */
+
 /**
- * The hero. The wordmark is real DOM text sitting BEHIND the canvas, so the
- * diamond has something recognisable to refract — and so the LCP element is
- * text, not the canvas (§6).
+ * Conversion-focused hero: one promise, one primary action, and the three
+ * objections answered immediately beneath it. Split layout rather than a
+ * text-over-photo overlay — overlaid type on jewellery photography either
+ * covers the product or drops below contrast, and usually both.
  */
-export const Hero = forwardRef<HTMLDivElement, { animate: boolean }>(function Hero(
-  { animate },
-  ref,
-) {
+export function Hero() {
   const { hero } = SAMPLE_DATA;
-  const eyebrow = useRef<HTMLParagraphElement>(null);
-  const wordmark = useRef<HTMLHeadingElement>(null);
-  const subhead = useRef<HTMLParagraphElement>(null);
-  const ctas = useRef<HTMLDivElement>(null);
-
-  // Elements are rendered visible; the timeline animates FROM a hidden state at
-  // runtime. If JS never runs, or on the static tier, the hero is simply there.
-  useIntroTimeline({ eyebrow, wordmark, subhead, ctas }, animate);
-
   return (
-    <section className="relative flex min-h-[100svh] flex-col items-center justify-center text-center">
-      {/* The stone gets its own stage above the type.
-          Earlier this View tracked the whole hero section, so the diamond
-          rendered full-bleed behind the copy — it swallowed the wordmark and
-          dropped the subhead below AA contrast. A jeweller photographs the
-          piece and sets the type beneath it; so does this. */}
-      <div ref={ref} aria-hidden="true" className="h-[34svh] w-full md:h-[38svh]" />
+    <section id="top" className="relative pt-28 pb-16 md:pt-32 md:pb-24">
+      <div className={`${shell} grid items-center gap-12 md:grid-cols-2 md:gap-16`}>
+        <div>
+          <p className="eyebrow text-gold">{hero.eyebrow}</p>
+          <h1 className="wordmark mt-6">{hero.headline}</h1>
+          <p className="subhead mt-6 max-w-[26ch] text-ink">{hero.subhead}</p>
+          <p className="mt-6 max-w-[46ch] text-stone">{hero.body}</p>
 
-      <div className={`${shell} relative z-10 flex flex-col items-center`}>
-        <p ref={eyebrow} className="eyebrow mb-8">
-          {hero.eyebrow}
-        </p>
-        <h1 ref={wordmark} className="wordmark text-platinum">
-          {hero.headline}
-        </h1>
-        <p ref={subhead} className="mt-10 max-w-measure text-muted">
-          {hero.subhead}
-        </p>
-        <div ref={ctas} className="mt-12 flex flex-col gap-4 sm:flex-row">
-          <a
-            href={hero.primaryCta.href}
-            className="border border-champagne px-8 py-4 text-champagne text-xs uppercase tracking-[0.24em] transition-colors hover:bg-champagne hover:text-vitrine"
-          >
-            {hero.primaryCta.label}
-          </a>
-          <a
-            href={hero.secondaryCta.href}
-            className="px-8 py-4 text-xs uppercase tracking-[0.24em] text-muted transition-colors hover:text-platinum"
-          >
-            {hero.secondaryCta.label}
-          </a>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <a href={hero.primaryCta.href} className="btn-primary">
+              {hero.primaryCta.label}
+            </a>
+            <a href={hero.secondaryCta.href} className="btn-secondary">
+              {hero.secondaryCta.label}
+            </a>
+          </div>
+
+          <ul className="mt-10 flex flex-col gap-2 border-t border-[var(--rule)] pt-6 text-sm text-stone sm:flex-row sm:gap-8">
+            {hero.trust.map((t) => (
+              <li key={t} className="flex items-center gap-2">
+                <span aria-hidden="true" className="text-gold">
+                  —
+                </span>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="img-frame relative aspect-[4/5] w-full">
+          <Image
+            src={hero.image.src}
+            alt={hero.image.alt}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
         </div>
       </div>
     </section>
   );
-});
+}
 
-export function PieceSection({
-  piece,
-  index,
-  setRef,
-  animate,
-}: {
-  piece: (typeof SAMPLE_DATA)['pieces'][number];
-  index: number;
-  setRef: (el: HTMLElement | null) => void;
-  animate: boolean;
-}) {
-  const setInspecting = useSceneStore((s) => s.setInspecting);
-  const sectionRef = useRef<HTMLElement>(null);
-  // Alternate sides so the eye zigzags instead of scanning a row.
-  const flip = index % 2 === 1;
+/* ------------------------------------------------------------------ shop - */
 
-  usePieceTimeline(piece.id, sectionRef, animate);
-
+function ShopCard({ item }: { item: ShopItem }) {
+  const { shop } = SAMPLE_DATA;
   return (
-    <section
-      ref={sectionRef}
-      id={`piece-${piece.id}`}
-      className={`${shell} flex min-h-[100svh] flex-col items-center gap-10 py-24 md:flex-row md:gap-16 ${
-        flip ? 'md:flex-row-reverse' : ''
-      }`}
-      aria-labelledby={`piece-${piece.id}-title`}
-    >
-      <div className="w-full md:w-1/2">
-        <p className="eyebrow mb-6">
-          {piece.index} — {piece.material}
-        </p>
-        <h2 id={`piece-${piece.id}-title`} className="display text-platinum">
-          {piece.name}
-        </h2>
-        <p className="font-numeral mt-8 text-[length:var(--step-numeral)] text-ice">{piece.spec}</p>
-        <hr className="my-8 w-24 border-0 border-t border-[var(--rule)]" />
-        <p className="max-w-measure text-muted">{piece.craftNote}</p>
-        <button
-          type="button"
-          onClick={() => setInspecting(piece.id)}
-          className="mt-10 border border-champagne px-7 py-3.5 text-xs uppercase tracking-[0.24em] text-champagne transition-colors hover:bg-champagne hover:text-vitrine"
+    <article className="group flex flex-col" data-reveal>
+      <div className="img-frame relative aspect-[4/5] w-full">
+        <Image
+          src={item.image.src}
+          alt={item.image.alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+        />
+      </div>
+      <p className="eyebrow mt-5 text-gold">{item.category}</p>
+      <h3 className="font-display mt-2 text-2xl">{item.name}</h3>
+      <p className="font-numeral mt-2 text-[length:var(--step-numeral)] text-stone">{item.spec}</p>
+      <p className="mt-3 max-w-[38ch] flex-1 text-sm text-stone">{item.detail}</p>
+      <div className="mt-5 flex items-center gap-4 border-t border-[var(--rule)] pt-4">
+        <a
+          href={shop.primaryCta.href}
+          className="text-xs uppercase tracking-[0.2em] text-ink underline-offset-4 hover:underline"
         >
-          {piece.cta.label}
-        </button>
+          Reserve
+        </a>
+        <a
+          href={shop.secondaryCta.href}
+          className="text-xs uppercase tracking-[0.2em] text-stone underline-offset-4 hover:text-ink hover:underline"
+        >
+          Enquire
+        </a>
       </div>
+    </article>
+  );
+}
 
-      {/* Canvas anchor. aria-hidden: the real content is the DOM above. */}
-      <div
-        ref={setRef}
-        aria-hidden="true"
-        className="h-[46svh] w-full md:h-[70svh] md:w-1/2"
-      />
+export function Shop() {
+  const { shop } = SAMPLE_DATA;
+  return (
+    <section id="collection" className="bg-linen py-24 md:py-32" aria-labelledby="shop-title">
+      <div className={shell}>
+        <div className="max-w-2xl" data-reveal>
+          <p className="eyebrow text-gold">{shop.eyebrow}</p>
+          <h2 id="shop-title" className="display mt-5">
+            {shop.headline}
+          </h2>
+          <p className="mt-6 text-stone">{shop.body}</p>
+          <p className="font-numeral mt-4 text-sm text-gold">{shop.priceNote}</p>
+        </div>
+
+        <div className="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          {shop.items.map((item) => (
+            <ShopCard key={item.id} item={item} />
+          ))}
+        </div>
+
+        <div className="mt-16 flex flex-col gap-3 sm:flex-row">
+          <a href={shop.primaryCta.href} className="btn-primary">
+            {shop.primaryCta.label}
+          </a>
+          <a href={shop.secondaryCta.href} className="btn-secondary">
+            {shop.secondaryCta.label}
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
 
-export function InspectPanel() {
-  const inspecting = useSceneStore((s) => s.inspecting);
-  const setInspecting = useSceneStore((s) => s.setInspecting);
-  const piece = SAMPLE_DATA.pieces.find((p) => p.id === inspecting);
-
-  useEffect(() => {
-    if (!inspecting) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setInspecting(null);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [inspecting, setInspecting]);
-
-  if (!piece) return null;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="inspect-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-vitrine/80 backdrop-blur-sm md:items-center"
-      onClick={() => setInspecting(null)}
-    >
-      <div
-        className="w-full max-w-xl border border-[var(--rule)] bg-vitrine-2 p-8 md:p-12"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <p className="eyebrow mb-5">{piece.material}</p>
-        <h3 id="inspect-title" className="display text-platinum">
-          {piece.name}
-        </h3>
-        <ul className="font-numeral mt-7 flex flex-wrap gap-x-6 gap-y-2 text-ice">
-          {piece.specParts.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ul>
-        <p className="mt-7 text-muted">{piece.craftNote}</p>
-        <div className="mt-10 flex items-center gap-6">
-          <a
-            href={SAMPLE_DATA.appointment.cta.href}
-            className="border border-champagne px-7 py-3.5 text-xs uppercase tracking-[0.24em] text-champagne transition-colors hover:bg-champagne hover:text-vitrine"
-          >
-            {SAMPLE_DATA.appointment.cta.label}
-          </a>
-          <button
-            type="button"
-            autoFocus
-            onClick={() => setInspecting(null)}
-            className="text-xs uppercase tracking-[0.24em] text-muted transition-colors hover:text-platinum"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+/* ------------------------------------------------------------ assurances - */
 
 export function Assurances() {
   return (
-    <section className={`${shell} py-28`} aria-labelledby="assurances-title">
-      <h2 id="assurances-title" className="display mb-16 text-platinum">
-        Proof, not persuasion
-      </h2>
-      <div className="grid gap-12 md:grid-cols-3">
-        {SAMPLE_DATA.assurances.map((a) => (
-          <div key={a.title}>
-            <h3 className="font-display text-2xl text-champagne">{a.title}</h3>
-            <p className="mt-4 text-muted">{a.body}</p>
-          </div>
-        ))}
+    <section className="py-24 md:py-28" aria-labelledby="assurances-title">
+      <div className={shell}>
+        <h2 id="assurances-title" className="display max-w-2xl" data-reveal>
+          Proof, not persuasion
+        </h2>
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {SAMPLE_DATA.assurances.map((a, i) => (
+            <div key={a.title} className="border-t border-[var(--rule)] pt-6">
+              <p className="font-numeral text-sm text-gold">0{i + 1}</p>
+              <h3 className="font-display mt-3 text-2xl">{a.title}</h3>
+              <p className="mt-3 text-sm text-stone">{a.body}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
+
+/* ---------------------------------------------------------------- bridal - */
+
+export function Bridal() {
+  const { bridal } = SAMPLE_DATA;
+  return (
+    <section id="bridal" className="on-ink bg-ink py-24 text-bone md:py-32" aria-labelledby="bridal-title">
+      <div className={`${shell} grid items-center gap-12 md:grid-cols-2 md:gap-16`}>
+        <div className="img-frame relative aspect-[5/4] w-full md:order-2">
+          <Image
+            src={bridal.image.src}
+            alt={bridal.image.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="md:order-1" data-reveal>
+          <p className="eyebrow text-[color:var(--gold-leaf)]">{bridal.eyebrow}</p>
+          <h2 id="bridal-title" className="display mt-5">
+            {bridal.headline}
+          </h2>
+          <p className="mt-6 max-w-[46ch] text-bone/75">{bridal.body}</p>
+          <a
+            href={bridal.cta.href}
+            className="mt-10 inline-flex border border-[color:var(--gold-leaf)] px-9 py-4 text-[0.72rem] uppercase tracking-[0.22em] text-[color:var(--gold-leaf)] transition-colors hover:bg-[color:var(--gold-leaf)] hover:text-ink"
+          >
+            {bridal.cta.label}
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------- workshop - */
 
 export function Workshop() {
   const { workshop } = SAMPLE_DATA;
   return (
-    <section id="workshop" className={`${shell} py-28`} aria-labelledby="workshop-title">
-      <p className="eyebrow mb-6">{workshop.eyebrow}</p>
-      <h2 id="workshop-title" className="display max-w-3xl text-platinum">
-        {workshop.headline}
-      </h2>
-      <p className="mt-8 max-w-measure text-muted">{workshop.body}</p>
+    <section className="py-24 md:py-32" aria-labelledby="workshop-title">
+      <div className={`${shell} grid items-center gap-12 md:grid-cols-2 md:gap-16`}>
+        <div className="img-frame relative aspect-[5/4] w-full">
+          <Image
+            src={workshop.image.src}
+            alt={workshop.image.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+        <div>
+          <p className="eyebrow text-gold">{workshop.eyebrow}</p>
+          <h2 id="workshop-title" className="display mt-5">
+            {workshop.headline}
+          </h2>
+          <p className="mt-6 max-w-[46ch] text-stone">{workshop.body}</p>
+        </div>
+      </div>
     </section>
   );
 }
+
+/* ----------------------------------------------------------- appointment - */
 
 export function Appointment() {
   const { appointment, contact, reviews, reviewsAreSample } = SAMPLE_DATA;
   return (
-    <section id="appointment" className={`${shell} py-28`} aria-labelledby="appointment-title">
-      <p className="eyebrow mb-6">{appointment.eyebrow}</p>
-      <h2 id="appointment-title" className="display max-w-3xl text-platinum">
-        {appointment.headline}
-      </h2>
-      <p className="mt-8 max-w-measure text-muted">{appointment.body}</p>
-      <a
-        href={contact.phoneHref}
-        className="mt-10 inline-block border border-champagne px-8 py-4 text-xs uppercase tracking-[0.24em] text-champagne transition-colors hover:bg-champagne hover:text-vitrine"
-      >
-        {appointment.cta.label}
-      </a>
-
-      {reviewsAreSample && (
-        <div className="mt-24 border-t border-[var(--rule)] pt-10">
-          <p className="eyebrow mb-8">Sample reviews — placeholder text</p>
-          <div className="grid gap-8 md:grid-cols-3">
-            {reviews.map((r) => (
-              <figure key={r.quote}>
-                <blockquote className="text-muted">{r.quote}</blockquote>
-                <figcaption className="eyebrow mt-4">{r.attribution}</figcaption>
-              </figure>
-            ))}
+    <section id="appointment" className="bg-linen py-24 md:py-32" aria-labelledby="appointment-title">
+      <div className={shell}>
+        <div className="max-w-2xl">
+          <p className="eyebrow text-gold">{appointment.eyebrow}</p>
+          <h2 id="appointment-title" className="display mt-5">
+            {appointment.headline}
+          </h2>
+          <p className="mt-6 text-stone">{appointment.body}</p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <a href={appointment.primaryCta.href} className="btn-primary">
+              {appointment.primaryCta.label}
+            </a>
+            <a href={appointment.secondaryCta.href} className="btn-secondary">
+              {appointment.secondaryCta.label}
+            </a>
           </div>
+          <p className="mt-6 text-sm text-stone">
+            {contact.addressLine1}, {contact.addressLine2}
+          </p>
         </div>
-      )}
+
+        {reviewsAreSample && (
+          <div className="mt-20 border-t border-[var(--rule)] pt-10">
+            <p className="eyebrow mb-8 text-stone">Sample reviews — placeholder text</p>
+            <div className="grid gap-8 md:grid-cols-3">
+              {reviews.map((r) => (
+                <figure key={r.quote}>
+                  <blockquote className="font-numeral text-lg leading-relaxed">
+                    “{r.quote}”
+                  </blockquote>
+                  <figcaption className="eyebrow mt-4 text-stone">{r.attribution}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
 
+/* ---------------------------------------------------------------- footer - */
+
 export function Footer() {
   const { brand, contact } = SAMPLE_DATA;
   return (
-    <footer className={`${shell} border-t border-[var(--rule)] py-16`}>
-      <div className="grid gap-10 md:grid-cols-3">
+    <footer className="on-ink bg-ink py-16 text-bone">
+      <div className={`${shell} grid gap-10 md:grid-cols-3`}>
         <div>
-          <p className="font-display text-xl tracking-[0.18em] uppercase">{brand.wordmark}</p>
-          <p className="mt-3 text-sm text-muted">
+          <p className="font-display text-2xl uppercase tracking-[0.18em]">{brand.wordmark}</p>
+          <p className="mt-3 text-sm text-bone/60">
             {brand.generations} · {brand.city}, {brand.state}
           </p>
         </div>
-        <address className="not-italic text-sm text-muted">
+        <address className="not-italic text-sm text-bone/60">
           {contact.addressLine1}
           <br />
           {contact.addressLine2}
           <br />
-          <a href={contact.phoneHref} className="mt-2 inline-block hover:text-platinum">
+          <a href={contact.phoneHref} className="mt-2 inline-block hover:text-bone">
             {contact.phone}
           </a>
         </address>
-        <div className="text-sm text-muted">
+        <div className="text-sm text-bone/60">
           {contact.hours.map((h) => (
             <p key={h.days}>
               {h.days} · {h.open}–{h.close}
@@ -292,9 +331,31 @@ export function Footer() {
           ))}
         </div>
       </div>
-      <p className="mt-12 text-xs text-muted/70">
-        Sample site. All details are placeholder data for demonstration.
-      </p>
+      <div className={`${shell} mt-12 border-t border-[var(--rule-invert)] pt-6`}>
+        <p className="text-xs text-bone/40">
+          Sample site. All details are placeholder data; photography is stock and not the
+          pieces described.
+        </p>
+      </div>
     </footer>
+  );
+}
+
+/** Sticky mobile conversion bar — the highest-intent action, always reachable. */
+export function MobileCta() {
+  const { appointment } = SAMPLE_DATA;
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      ref={ref}
+      className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-[var(--rule)] bg-bone/95 p-3 backdrop-blur-sm md:hidden"
+    >
+      <a href={appointment.primaryCta.href} className="btn-primary flex-1 !px-3 !py-3">
+        Book a viewing
+      </a>
+      <a href={appointment.secondaryCta.href} className="btn-secondary flex-1 !px-3 !py-3">
+        WhatsApp
+      </a>
+    </div>
   );
 }

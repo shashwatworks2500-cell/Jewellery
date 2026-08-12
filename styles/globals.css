@@ -3,40 +3,40 @@
 @tailwind utilities;
 
 /**
- * Design tokens. Mirrored in lib/tokens.ts for the 3D scene.
- * Never write a hex literal in a component (brief §2, §7).
+ * Tokens mirrored from lib/tokens.ts. See that file for measured contrast.
+ * Typography is unchanged — the type scale and the Italiana/Bodoni/Jost
+ * pairing were working, so only the palette and surfaces moved.
  */
 :root {
-  --vitrine: #0b0e14;
-  --vitrine-2: #141925;
-  --champagne: #d8b778;
-  --platinum: #e8ecf2;
-  --ice: #7fb6d6;
-  --muted: #9aa4b2;
+  --bone: #f6f3ee;
+  --linen: #ede8df;
+  --ink: #16130f;
+  --stone: #5f594f;
+  --gold: #6f5426;
+  --gold-leaf: #c9a227;
+  --rule: rgba(22, 19, 15, 0.14);
+  --rule-invert: rgba(246, 243, 238, 0.18);
 
-  /* Type scale — clamp-based, three roles (display / numerals / UI). */
-  --step-wordmark: clamp(3.25rem, 11.5vw, 10.5rem);
-  --step-display: clamp(2rem, 4.8vw, 4.25rem);
-  --step-numeral: clamp(1.1rem, 2.2vw, 1.75rem);
+  /* Type scale — clamp-based, unchanged. */
+  --step-wordmark: clamp(3rem, 9vw, 7.5rem);
+  --step-display: clamp(2rem, 4.6vw, 4rem);
+  --step-sub: clamp(1.35rem, 2.4vw, 2rem);
+  --step-numeral: clamp(1rem, 1.9vw, 1.4rem);
   --step-body: clamp(0.98rem, 1.05vw, 1.1rem);
-  --step-eyebrow: 0.72rem;
+  --step-eyebrow: 0.7rem;
 
-  --rule: rgba(216, 183, 120, 0.22);
   --shell: clamp(1.25rem, 5vw, 6rem);
 }
 
 html {
-  background-color: var(--vitrine);
-  color-scheme: dark;
+  background-color: var(--bone);
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  /* NO background here. The ground colour lives on <html> only.
-     An opaque background on <body> paints over a fixed canvas sitting behind
-     it in the stacking order, which silently hides the entire 3D scene. */
-  background-color: transparent;
-  color: var(--platinum);
+  background-color: var(--bone);
+  color: var(--ink);
   font-family: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
   font-weight: 300;
   font-size: var(--step-body);
@@ -46,7 +46,14 @@ body {
   overflow-x: hidden;
 }
 
-/* Lenis owns the scroll; it needs this to avoid fighting native smooth. */
+/* The sticky mobile CTA bar is fixed, so it would otherwise sit on top of the
+   last section. Reserve its height (plus the iOS home indicator) below 768px. */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 html.lenis,
 html.lenis body {
   height: auto;
@@ -67,41 +74,94 @@ html.lenis body {
 .wordmark {
   font-family: var(--font-italiana), ui-serif, Georgia, serif;
   font-size: var(--step-wordmark);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
 }
 
 .display {
   font-family: var(--font-italiana), ui-serif, Georgia, serif;
   font-size: var(--step-display);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+.subhead {
+  font-family: var(--font-bodoni), ui-serif, Georgia, serif;
+  font-size: var(--step-sub);
+  line-height: 1.35;
 }
 
 .eyebrow {
   font-size: var(--step-eyebrow);
   text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--champagne);
+  letter-spacing: 0.32em;
   font-weight: 400;
 }
 
-/* Focus rings in champagne (brief §8). Visible, never removed. */
-:where(a, button, [tabindex]):focus-visible {
-  outline: 1px solid var(--champagne);
-  outline-offset: 4px;
+/* Buttons — the conversion surface. Two weights only. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--bone);
+  padding: 1.05rem 2.25rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  border: 1px solid var(--ink);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.btn-primary:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--ink);
+  padding: 1.05rem 2.25rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  border: 1px solid var(--rule);
+  transition: border-color 0.25s ease;
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
+}
+
+/* Focus rings — visible, never removed. Dark on light grounds. */
+:where(a, button, [tabindex], input, select, textarea):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
   border-radius: 1px;
+}
+.on-ink :where(a, button, [tabindex]):focus-visible {
+  outline-color: var(--gold-leaf);
 }
 
 ::selection {
-  background: var(--champagne);
-  color: var(--vitrine);
+  background: var(--ink);
+  color: var(--bone);
 }
 
-/**
- * Tier 3 fallback: reduced motion. The canvas is not mounted at all — the
- * static hero must look intentional, not broken (brief §6).
- */
+/* Editorial image treatment: slight warm lift, no filters that fight the
+   photography. Images are the product here. */
+.img-frame {
+  overflow: hidden;
+  background: var(--linen);
+}
+.img-frame img {
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .img-frame img {
+  transform: scale(1.04);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -110,5 +170,8 @@ html.lenis body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .group:hover .img-frame img {
+    transform: none;
   }
 }
