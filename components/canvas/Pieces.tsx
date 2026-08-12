@@ -100,7 +100,11 @@ export function Kada({ spin = 1 }: PieceProps) {
   });
 
   return (
-    <mesh ref={meshRef} geometry={geometry} rotation={[0.42, 0, 0.18]} scale={1.15}>
+    /* Scale is bounded by the stage, not taste: at z=3.7 with fov 32 the
+       visible height is 2*3.7*tan(16°) ≈ 2.12 units, and the inspect dolly
+       brings that down to ≈1.49. The kada geometry is 2.0 units across, so
+       anything above ~0.7 crops. 0.62 leaves margin in the focused state. */
+    <mesh ref={meshRef} geometry={geometry} rotation={[0.42, 0, 0.18]} scale={0.62}>
       <meshStandardMaterial
         color={MATERIALS.gold.color}
         metalness={MATERIALS.gold.metalness}
@@ -122,7 +126,9 @@ export function Anklet({ spin = 1 }: PieceProps) {
   });
 
   return (
-    <mesh ref={meshRef} geometry={geometry} rotation={[0.1, 0, 0]} scale={0.95}>
+    /* Same stage bound as the kada; tilted further so the ring reads as a ring
+       rather than as an edge-on line. */
+    <mesh ref={meshRef} geometry={geometry} rotation={[0.62, 0, 0.12]} scale={0.68}>
       {/* Silver differs from gold in THREE ways, not just colour: cooler tint,
           higher roughness (0.31 vs 0.19) and lower envMapIntensity. That is
           what makes them read as two distinguishable metals. */}

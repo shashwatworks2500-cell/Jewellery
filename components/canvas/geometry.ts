@@ -98,26 +98,54 @@ export function createKadaGeometry(): THREE.BufferGeometry {
 }
 
 /**
- * 999 silver temple-form anklet. Lathed, with a deliberate irregularity in the
- * profile — the craft note says the tool mark is not corrected, so the silhouette
- * must not be perfectly regular or the material story is a lie.
+ * 999 silver temple-form anklet (payal).
+ *
+ * An anklet is a RING worn round the ankle. The previous version revolved an
+ * open bell curve about the axis, which produces a solid of revolution — it
+ * read as a vessel, not jewellery, and contradicted its own copy.
+ *
+ * So: a closed cross-section swept at a radius, i.e. a torus. It is
+ * distinguished from the gold kada by being a thin round wire rather than a
+ * wide bevelled band, and by a periodic radial ripple around the circumference
+ * — the temple-form scallop, and the hammer planes the craft note refuses to
+ * polish out. The ripple has to be applied per-vertex after the lathe, because
+ * LatheGeometry cannot vary a profile by angle.
  */
 export function createAnkletGeometry(): THREE.BufferGeometry {
+  const RING_RADIUS = 0.92;
+  const WIRE = 0.055; // noticeably thinner than the kada's band
+
+  // Closed, slightly flattened section — the face that sits against the ankle.
   const profile: THREE.Vector2[] = [];
-  const steps = 26;
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const y = (t - 0.5) * 1.5;
-    // Base temple-bell curve.
-    let r = 0.42 + Math.sin(t * Math.PI) * 0.32;
-    // Hand-hammered irregularity: a low-frequency wobble, deterministic so the
-    // geometry is stable across reloads.
-    r += Math.sin(t * 13.7) * 0.012 + Math.sin(t * 31.3) * 0.006;
-    profile.push(new THREE.Vector2(Math.max(r, 0.04), y));
+  const sectionSteps = 18;
+  for (let i = 0; i <= sectionSteps; i++) {
+    const a = (i / sectionSteps) * Math.PI * 2;
+    profile.push(
+      new THREE.Vector2(RING_RADIUS + Math.cos(a) * WIRE, Math.sin(a) * WIRE * 0.78),
+    );
   }
-  // 48 segments, not 128 — the faceting from a coarser lathe reads as hammer
-  // planes on silver, which is what we want here.
-  const geo = new THREE.LatheGeometry(profile, 48);
+
+  const geo = new THREE.LatheGeometry(profile, 136);
+
+  // Temple-form scallop + hammer irregularity, applied around the ring.
+  // Deterministic, so the geometry is identical on every reload.
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const radial = Math.hypot(v.x, v.z);
+    if (radial > 1e-6) {
+      const theta = Math.atan2(v.z, v.x);
+      const ripple = Math.sin(theta * 24) * 0.009 + Math.sin(theta * 8) * 0.005;
+      const s = (radial + ripple) / radial;
+      v.x *= s;
+      v.z *= s;
+      pos.setXYZ(i, v.x, v.y, v.z);
+    }
+  }
+  pos.needsUpdate = true;
+
+  geo.rotateX(Math.PI / 2);
   geo.computeVertexNormals();
   geo.center();
   return geo;
