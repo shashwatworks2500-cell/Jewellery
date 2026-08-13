@@ -119,7 +119,7 @@ export function useSmoothScroll(enabled: boolean) {
          reading as momentum and starts reading as a rendering bug. */
       let velTween: gsap.core.Tween | null = null;
       lenis.on('scroll', ({ velocity }: { velocity: number }) => {
-        const skew = gsap.utils.clamp(-2.2, 2.2, velocity * 0.12);
+        const skew = gsap.utils.clamp(-1.6, 1.6, velocity * 0.09);
         velTween?.kill();
         velTween = gsap.to('[data-skew]', {
           skewY: skew,
@@ -127,8 +127,6 @@ export function useSmoothScroll(enabled: boolean) {
           ease: 'power2.out',
           overwrite: true,
         });
-        const speed = gsap.utils.clamp(0.6, 3, 1 + Math.abs(velocity) * 0.03);
-        document.documentElement.style.setProperty('--mq-speed', String(speed));
       });
     }
 
@@ -255,7 +253,6 @@ export function useSmoothScroll(enabled: boolean) {
       if (onAnchorClick) document.removeEventListener('click', onAnchorClick);
       if (tick) gsap.ticker.remove(tick);
       lenis?.destroy();
-      document.documentElement.style.removeProperty('--mq-speed');
     };
   }, [enabled]);
 }

@@ -48,7 +48,7 @@ export const SAMPLE_DATA = {
     secondaryCta: { label: 'View the collection', href: '#collection' },
     image: {
       src: '/images/hero.jpg',
-      alt: 'A woman in an open white shirt wearing layered fine gold necklaces, a pendant and two rings.',
+      alt: 'Three fine rose-gold rings set with small stones, resting in an ivory velvet ring tray.',
     },
 
     /* A single photograph, not a sequence.

@@ -43,7 +43,7 @@ export function Hero() {
             priority
             quality={72}
             sizes="100vw"
-            className="object-cover object-[62%_center] md:object-center"
+            className="object-cover object-[center_34%] md:object-[center_42%]"
           />
         )}
         {/* Scrim, not a flat overlay: type stays legible at the bottom while
@@ -103,11 +103,15 @@ export function Marquee() {
   ];
   const run = [...items, ...items];
   return (
+    /* data-skew lives on the OUTER wrapper, never on the animated element:
+       GSAP writing a transform onto the same node that a CSS animation is
+       transforming is a fight neither wins cleanly. */
     <div
       className="mt-16 overflow-hidden border-y border-[var(--rule)] py-4 md:mt-24"
       aria-hidden="true"
+      data-skew
     >
-      <div className="marquee flex w-max gap-10 pr-10" data-skew>
+      <div className="marquee flex w-max gap-10 pr-10">
         {run.map((t, i) => (
           <span key={i} className="eyebrow whitespace-nowrap text-stone">
             {t} <span className="ml-10 text-gold">◆</span>

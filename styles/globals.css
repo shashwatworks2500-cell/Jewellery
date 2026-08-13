@@ -230,9 +230,10 @@ html.lenis body {
   to   { transform: translateX(-50%); }
 }
 .marquee {
-  /* --mq-speed is written by the scroll handler; the marquee accelerates with
-     scroll momentum and settles back to its resting pace. */
-  animation: marquee-run calc(42s / var(--mq-speed, 1)) linear infinite;
+  /* Constant duration. Driving this from --mq-speed re-mapped the elapsed time
+     onto a new progress point every time the value changed, so the band jumped
+     on each scroll tick. Momentum is expressed as skew on the wrapper instead. */
+  animation: marquee-run 42s linear infinite;
   will-change: transform;
 }
 
