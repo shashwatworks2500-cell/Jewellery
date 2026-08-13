@@ -46,27 +46,24 @@ export const SAMPLE_DATA = {
     body: 'Every stone carries its grading report. Every gram carries its BIS mark. Bring a design or bring an idea — we will make it in our own workshop.',
     primaryCta: { label: 'Book a bridal appointment', href: '#appointment' },
     secondaryCta: { label: 'View the collection', href: '#collection' },
-    image: { src: '/images/hero.jpg', alt: 'Diamond and gold earrings lit against a dark ground.' },
+    image: {
+      src: '/images/hero.jpg',
+      alt: 'A woman in an open white shirt wearing layered fine gold necklaces, a pendant and two rings.',
+    },
 
-    /* Hero film.
+    /* A single photograph, not a sequence.
      *
-     * `video` is null: no licensed jewellery footage is available for this
-     * pitch. Drop an H.264 MP4 at /public/video/hero.mp4 and set this to that
-     * path — the hero switches to a real <video> automatically, keeping the
-     * poster, autoplay/muted/loop/playsInline and the reduced-motion guard.
-     * Use MP4/H.264, not WebM: iOS Safari before 17.4 will not decode WebM and
-     * would sit on the poster.
+     * Three average frames read as a slideshow; one strong campaign image
+     * reads as a brand. This also returns the two extra full-viewport decodes
+     * the film was costing.
      *
-     * Until then `sequence` drives a crossfading film built from the stills we
-     * already load — the same content a synthesised video would have contained,
-     * at no extra bytes.
+     * `video` stays wired: drop an H.264 MP4 at /public/video/hero.mp4 and set
+     * this to that path and the hero switches to a real <video>, keeping this
+     * image as poster. MP4, not WebM — iOS Safari before 17.4 will not decode
+     * WebM and would sit on the poster.
      */
     video: null as string | null,
-    sequence: [
-      { src: '/images/hero.jpg', alt: 'Diamond and gold earrings lit against a dark ground.' },
-      { src: '/images/bracelet-diamond.jpg', alt: 'A diamond bracelet catching light against black.' },
-      { src: '/images/solitaire.jpg', alt: 'A brilliant-cut solitaire ring on a dark presentation box.' },
-    ],
+
     /* Trust row sits directly under the CTA — the three objections a buyer
        raises before they walk in. */
     trust: [

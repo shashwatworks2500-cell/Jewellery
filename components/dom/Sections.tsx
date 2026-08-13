@@ -36,27 +36,19 @@ export function Hero() {
             <source src={hero.video} type="video/mp4" />
           </video>
         ) : (
-          hero.sequence.map((frame, i) => (
-            <Image
-              key={frame.src}
-              src={img(frame.src)}
-              alt={i === 0 ? frame.alt : ''}
-              aria-hidden={i === 0 ? undefined : true}
-              fill
-              /* Only the first frame is priority — it is the LCP element.
-                 The others are ordinary lazy images that arrive long before
-                 their turn at 7s and 14s. */
-              priority={i === 0}
-              loading={i === 0 ? undefined : 'lazy'}
-              quality={70}
-              sizes="100vw"
-              className="hero-frame object-cover object-center"
-            />
-          ))
+          <Image
+            src={img(hero.image.src)}
+            alt={hero.image.alt}
+            fill
+            priority
+            quality={72}
+            sizes="100vw"
+            className="object-cover object-[62%_center] md:object-center"
+          />
         )}
         {/* Scrim, not a flat overlay: type stays legible at the bottom while
             the stones keep their highlights up top. */}
-        <div className="hero-scrim absolute inset-0" />
+        <div className="hero-scrim-light absolute inset-0" />
       </div>
 
       <div className="relative flex min-h-[100svh] flex-col justify-end pb-28 pt-28 md:justify-center md:pb-24">
@@ -64,27 +56,27 @@ export function Hero() {
           <div className="max-w-3xl">
             {/* bone, not gold: gold-on-gold over the photograph was
                 unreadable. The gold survives as the rule beside it. */}
-            <p className="eyebrow flex items-center gap-3 text-bone/90" data-line>
+            <p className="eyebrow flex items-center gap-3 text-gold" data-line>
               <span aria-hidden="true" className="block h-px w-6 bg-[color:var(--gold-leaf)]" />
               {hero.eyebrow}
             </p>
-            <h1 className="wordmark mt-4 text-bone" data-line>
+            <h1 className="wordmark mt-4 text-ink" data-line>
               {hero.headline}
             </h1>
-            <p className="subhead mt-4 max-w-[22ch] text-bone md:max-w-[26ch]" data-line>
+            <p className="subhead mt-4 max-w-[22ch] text-ink md:max-w-[26ch]" data-line>
               {hero.subhead}
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row" data-line>
               <a
                 href="#visit"
-                className="inline-flex w-full items-center justify-center bg-bone px-9 py-4 text-[0.72rem] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-[color:var(--gold-leaf)] sm:w-auto"
+                className="btn-primary w-full sm:w-auto"
               >
                 {hero.primaryCta.label}
               </a>
               <a
                 href={hero.secondaryCta.href}
-                className="inline-flex w-full items-center justify-center border border-bone/40 px-9 py-4 text-[0.72rem] uppercase tracking-[0.22em] text-bone transition-colors hover:border-bone sm:w-auto"
+                className="btn-secondary w-full border-ink/30 bg-bone/60 backdrop-blur-sm sm:w-auto"
               >
                 {hero.secondaryCta.label}
               </a>

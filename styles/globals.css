@@ -191,6 +191,15 @@ html.lenis body {
   animation: hero-drift 14s ease-out forwards;
 }
 
+/* Light scrim for a bright hero photograph. The dark scrim was built for a
+   dark image; over this one it would flatten the light and the warm skin
+   tones. Ink type sits on bone instead — 16.7:1, the strongest pair we have. */
+.hero-scrim-light {
+  background:
+    linear-gradient(to top, rgba(246, 243, 238, 0.96) 0%, rgba(246, 243, 238, 0.90) 26%,
+      rgba(246, 243, 238, 0.62) 44%, rgba(246, 243, 238, 0.12) 66%, rgba(246, 243, 238, 0.30) 100%);
+}
+
 /* Hero film: three stills crossfaded on a slow cycle with a continuous push
    in, so it reads as a single moving shot rather than a slideshow. 21s total,
    7s per frame, 1.2s of overlap at each handover. Pure CSS — no video bytes,

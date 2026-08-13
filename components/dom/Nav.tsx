@@ -95,7 +95,7 @@ export function Nav() {
         className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,color] duration-500 ${
           solid
             ? 'bg-bone/95 text-ink backdrop-blur-md'
-            : 'bg-gradient-to-b from-ink/70 via-ink/35 to-transparent text-bone'
+            : 'bg-gradient-to-b from-bone/85 via-bone/45 to-transparent text-ink'
         } ${hidden && !open ? '-translate-y-full' : 'translate-y-0'}`}
       >
         <div className="mx-auto flex w-full max-w-[92rem] items-center justify-between px-[var(--shell)] py-4 md:py-5">
@@ -114,7 +114,7 @@ export function Nav() {
               className={`inline-flex items-center justify-center px-5 py-2.5 text-[0.62rem] uppercase tracking-[0.22em] transition-colors ${
                 solid
                   ? 'bg-ink text-bone hover:bg-transparent hover:text-ink border border-ink'
-                  : 'border border-bone/50 text-bone hover:bg-bone hover:text-ink'
+                  : 'border border-ink/40 text-ink hover:bg-ink hover:text-bone'
               }`}
             >
               Book a viewing
